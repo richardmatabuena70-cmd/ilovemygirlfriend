@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You ❤️</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="theme.css">
+    <style>
+        .page {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .page.active {
+            display: flex;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, var(--rose-deep) 0%, var(--rose-mid) 100%);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            box-shadow: 0 4px 15px var(--shadow-medium), inset 0 1px 2px rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+            z-index: 100;
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            display: none;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--shadow-strong), inset 0 1px 2px rgba(255,255,255,0.3);
+            background: linear-gradient(135deg, var(--rose-mid) 0%, var(--rose-deep) 100%);
+        }
+
+        .back-button.visible {
+            display: block;
+        }
+
+        #page-gift .back-button,
+        #page-hearts .back-button {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <audio id="bgMusic" src="bgmusic.mp3" preload="auto" loop></audio>
+
+    <button class="back-button" id="backBtn" onclick="goBack()">← Back</button>
+
+    <div class="page active" id="page-gift">
+        <div class="title">Hi, Love! Ms. Antukin</div>
+        <div class="subtitle">I know you appreciate my effort, so i made this little present just for you!</div>
+
+        <div class="gift-container" id="giftContainer" onclick="openGift(event)">
+            <div class="gift-box">
+                <div class="gift-ribbon-bow">
+                    <div class="gift-ribbon-bow-center"></div>
+                </div>
+                <div class="gift-ribbon-tails">
+                    <div class="gift-ribbon-tail gift-ribbon-tail-left"></div>
+                    <div class="gift-ribbon-tail gift-ribbon-tail-right"></div>
+                </div>
+                <div class="gift-box-top" id="giftTop">
+                    <div class="gift-box-top-ribbon"></div>
+                </div>
+                <div class="gift-box-body">
+                    <div class="gift-box-ribbon-vertical"></div>
+                    <div class="gift-box-ribbon-horizontal"></div>
+                </div>
+            </div>
+            <div class="gift-shadow"></div>
+        </div>
+
+        <div class="click-text">click the gift to open your present</div>
+    </div>
+
+    <div class="page" id="page-jar">
+        <div class="instruction">Look what I found for you!</div>
+
+        <div class="content-area">
+            <div class="jar-wrapper" id="jarContainer" onclick="openJar()">
+                <div class="jar">
+                    <div class="jar-lid"></div>
+                    <div class="jar-neck"></div>
+                    <div class="jar-body">
+                        <div class="jar-shine"></div>
+                        <div class="hearts-container">
+                            <div class="jar-heart">❤️</div>
+                            <div class="jar-heart">💖</div>
+                            <div class="jar-heart">💗</div>
+                            <div class="jar-heart">💓</div>
+                            <div class="jar-heart">💕</div>
+                            <div class="jar-heart">💘</div>
+                            <div class="jar-heart">💝</div>
+                            <div class="jar-heart">💖</div>
+                            <div class="jar-heart">❤️</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="envelope-wrapper" id="envelopeContainer" onclick="openEnvelope()">
+                <div class="envelope">
+                    <div class="envelope-shadow"></div>
+                    <div class="envelope-paper"></div>
+                    <div class="envelope-body"></div>
+                    <div class="envelope-flap"></div>
+                    <div class="envelope-wax-seal">❤️</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="click-text">click the jar to open your present</div>
+        <div class="click-text-envelope">click the envelope for a special letter</div>
+    </div>
+
+    <div class="page" id="page-hearts">
+        <div class="instruction">Click each heart to read your letter 💌</div>
+
+        <div class="jar-wrapper">
+            <div class="jar">
+                <div class="jar-lid"></div>
+                <div class="jar-neck"></div>
+                <div class="jar-body">
+                    <div class="jar-shine"></div>
+                    <div class="hearts-container">
+                        <div class="jar-heart" onclick="showLetter(1)">❤️</div>
+                        <div class="jar-heart" onclick="showLetter(2)">💖</div>
+                        <div class="jar-heart" onclick="showLetter(3)">💗</div>
+                        <div class="jar-heart" onclick="showLetter(4)">💓</div>
+                        <div class="jar-heart" onclick="showLetter(5)">💕</div>
+                        <div class="jar-heart" onclick="showLetter(6)">💘</div>
+                        <div class="jar-heart" onclick="showLetter(7)">💝</div>
+                        <div class="jar-heart" onclick="showLetter(8)">💖</div>
+                        <div class="jar-heart" onclick="showLetter(9)">❤️</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="letter-modal" id="letterModal">
+            <div class="paper-letter">
+                <button class="close-letter" onclick="closeLetter()">&times;</button>
+                <div class="paper-letter-content">
+                    <h3>My Dearest Love,</h3>
+                    <p id="letterText"></p>
+                    <div class="signature">Yours forever ❤️</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page" id="page-envelope">
+        <h1 class="page-title">My Dearest Love,</h1>
+
+        <div class="content-wrapper">
+            <div class="letter-section">
+                <div class="wax-seal">❤️</div>
+                <h2>My Antukin Girlfriend</h2>
+                <p data-typewriter data-speed="40">
+                    Every moment with you feels like a treasure I want to keep forever.
+                    This little website is just a small token of my love for you.
+                </p>
+                <p data-typewriter data-speed="40">
+                    I hope every page brings a smile to your beautiful face,
+                    just like you bring joy to my life every single day.
+                </p>
+                <p data-typewriter data-speed="40">
+                    Thank you for being the most amazing person I've ever known.
+                    I love you more than words could ever express.
+                </p>
+                <div class="signature" data-typewriter data-speed="40">Yours forever and always ❤️</div>
+            </div>
+
+            <div class="photos-section">
+                <h2>My Pretty Girl</h2>
+                <div class="polaroid-grid">
+                    <div class="polaroid">
+                        <div class="tape"></div>
+                        <div class="polaroid-image">
+                            <img src="images/photo23.jpg" alt="Memory 1">
+                        </div>
+                        <div class="polaroid-caption">Iloveyouu</div>
+                        <div class="stamp">LOVE</div>
+                    </div>
+
+                    <div class="polaroid">
+                        <div class="tape"></div>
+                        <div class="polaroid-image">
+                            <img src="images/photo20.jpg" alt="Memory 2">
+                        </div>
+                        <div class="polaroid-caption">iloveyouumoree</div>
+                        <div class="stamp">LOVE</div>
+                    </div>
+
+                    <div class="polaroid">
+                        <div class="tape"></div>
+                        <div class="polaroid-image">
+                            <img src="images/photo9.jpg" alt="Memory 3">
+                        </div>
+                        <div class="polaroid-caption">Iloveyousomuchh</div>
+                        <div class="stamp">LOVE</div>
+                    </div>
+
+                    <div class="polaroid">
+                        <div class="tape"></div>
+                        <div class="polaroid-image">
+                            <img src="images/photo4.jpg" alt="Memory 4">
+                        </div>
+                        <div class="polaroid-caption">Wo ai ni</div>
+                        <div class="stamp">LOVE</div>
+                    </div>
+
+                    <div class="polaroid">
+                        <div class="tape"></div>
+                        <div class="polaroid-image">
+                            <img src="images/photo17.jpg" alt="Memory 5">
+                        </div>
+                        <div class="polaroid-caption">Saranghae</div>
+                        <div class="stamp">LOVE</div>
+                    </div>
+
+                    <div class="polaroid">
+                        <div class="tape"></div>
+                        <div class="polaroid-image">
+                            <img src="images/photo6.jpg" alt="Memory 6">
+                        </div>
+                        <div class="polaroid-caption">Mahal na mahal kita</div>
+                        <div class="stamp">LOVE</div>
+                    </div>
+
+                    <div class="polaroid">
+                        <div class="tape"></div>
+                        <div class="polaroid-image">
+                            <img src="images/photo11.jpg" alt="Memory 7">
+                        </div>
+                        <div class="polaroid-caption">My everything</div>
+                        <div class="stamp">LOVE</div>
+                    </div>
+
+                    <div class="polaroid">
+                        <div class="tape"></div>
+                        <div class="polaroid-image">
+                            <img src="images/photo21.jpg" alt="Memory 8">
+                        </div>
+                        <div class="polaroid-caption">Always yours</div>
+                        <div class="stamp">LOVE</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById('page-' + pageId).classList.add('active');
+            
+            const backBtn = document.getElementById('backBtn');
+            if (pageId === 'gift') {
+                backBtn.classList.remove('visible');
+            } else {
+                backBtn.classList.add('visible');
+            }
+            
+            window.scrollTo(0, 0);
+            
+            if (pageId === 'envelope') {
+                setTimeout(typewriterEffect, 400);
+            }
+        }
+
+        function goBack() {
+            const currentPage = document.querySelector('.page.active');
+            if (currentPage.id === 'page-envelope') {
+                showPage('jar');
+            } else if (currentPage.id === 'page-hearts') {
+                showPage('jar');
+            } else if (currentPage.id === 'page-jar') {
+                showPage('gift');
+            }
+        }
+
+        function openGift(event) {
+            const container = document.getElementById('giftContainer');
+            
+            if (container.classList.contains('opened')) {
+                return;
+            }
+
+            container.classList.add('opening');
+            createSparkles(event.currentTarget);
+
+            const audio = document.getElementById('bgMusic');
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play().then(() => {
+                    sessionStorage.setItem('musicPlaying', 'true');
+                }).catch(e => console.log('Audio play failed:', e));
+            }
+
+            setTimeout(() => {
+                container.classList.remove('opening');
+                container.classList.add('opened');
+                createConfetti();
+                
+                setTimeout(() => {
+                    showPage('jar');
+                }, 1200);
+            }, 1000);
+        }
+
+        function openJar() {
+            const container = document.getElementById('jarContainer');
+            
+            if (container.classList.contains('opened')) {
+                showPage('hearts');
+                return;
+            }
+
+            container.classList.add('opening');
+            createSparkles();
+            createConfetti();
+            
+            setTimeout(() => {
+                container.classList.add('opened');
+                showPage('hearts');
+            }, 800);
+        }
+
+        function openEnvelope() {
+            const container = document.getElementById('envelopeContainer');
+            
+            container.classList.add('opening');
+            createSparkles();
+            createConfetti();
+            
+            setTimeout(() => {
+                container.classList.add('opened');
+                showPage('envelope');
+            }, 800);
+        }
+
+        function showLetter(heartNumber) {
+            const modal = document.getElementById('letterModal');
+            const letterText = document.getElementById('letterText');
+            
+            const letters = {
+                1: "My dearest love,<br><br>Even though miles keep us apart right now, my heart is always with you. Distance means nothing when you mean everything to me. I count every second until I can hold you close again.",
+                2: "Sweetheart,<br><br>You are the most loving and caring person I've ever met. Even across the distance, your warmth reaches me. Thank you for being my safe place, my home, no matter how far apart we are.",
+                3: "My beautiful girl,<br><br>I love how you care for everyone around you with such a big heart. You make the world softer just by being in it. I'm so proud to call you mine, even when we're miles apart.",
+                4: "To my one and only,<br><br>I know you cry when I send you long sweet messages, but I'll never stop sending them. Those tears mean my words reach your heart, and that's all I want. I love making you feel loved.",
+                5: "Love of my life,<br><br>Every little thing I do is for you. You appreciate every effort, every small gesture, and that makes every mile between us worth it. I'd cross oceans just to see you smile.",
+                6: "My angel,<br><br>Distance is hard, but your love makes it bearable. Your caring nature, your sweet tears, your appreciation for everything I do - I love you more than these words could ever say.",
+                7: "To the girl who stole my heart,<br><br>You're my favorite notification, my sweetest distraction, and my greatest love. Even across time zones, you feel like home. I love you endlessly, my precious crybaby.",
+                8: "My darling,<br><br>Thank you for appreciating every little thing I do. You make me want to be better, to love deeper, to write longer messages just to see that beautiful smile on your face.",
+                9: "Forever yours,<br><br>Long distance is just a test to see how far love can travel, and ours is going the distance. I love you more with every message, every call, every tear you cry. You're my everything."
+            };
+            
+            letterText.innerHTML = letters[heartNumber];
+            
+            modal.classList.add('active');
+            createSparkles();
+            createConfetti();
+        }
+
+        function closeLetter() {
+            document.getElementById('letterModal').classList.remove('active');
+        }
+
+        function createSparkles(element) {
+            if (element) {
+                const rect = element.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                for (let i = 0; i < 15; i++) {
+                    const sparkle = document.createElement('div');
+                    sparkle.className = 'sparkle';
+                    sparkle.innerHTML = '✨';
+                    sparkle.style.left = (centerX + (Math.random() - 0.5) * 100) + 'px';
+                    sparkle.style.top = (centerY + (Math.random() - 0.5) * 100) + 'px';
+                    sparkle.style.fontSize = (Math.random() * 15 + 10) + 'px';
+                    document.body.appendChild(sparkle);
+                    setTimeout(() => sparkle.remove(), 1000);
+                }
+            } else {
+                for (let i = 0; i < 20; i++) {
+                    const sparkle = document.createElement('div');
+                    sparkle.className = 'sparkle';
+                    sparkle.innerHTML = '✨';
+                    sparkle.style.left = Math.random() * 100 + 'vw';
+                    sparkle.style.top = Math.random() * 100 + 'vh';
+                    sparkle.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                    sparkle.style.position = 'fixed';
+                    document.body.appendChild(sparkle);
+                    setTimeout(() => sparkle.remove(), 1000);
+                }
+            }
+        }
+
+        function createConfetti() {
+            const colors = ['#f06292', '#e91e63', '#f48fb1', '#ff80ab', '#c2185b', '#ff4081', '#ffd1e0', '#fff5f8'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    confetti.style.width = (Math.random() * 12 + 5) + 'px';
+                    confetti.style.height = (Math.random() * 12 + 5) + 'px';
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 4000);
+                }, i * 25);
+            }
+        }
+
+        function createTulips() {
+            const tulipEmojis = ['🌷', '💜', '🌸', '💖', '💗', '💕'];
+            const interval = setInterval(() => {
+                const tulip = document.createElement('div');
+                tulip.className = 'tulip';
+                tulip.textContent = tulipEmojis[Math.floor(Math.random() * tulipEmojis.length)];
+                tulip.style.left = Math.random() * 100 + 'vw';
+                tulip.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+                tulip.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                document.body.appendChild(tulip);
+                setTimeout(() => tulip.remove(), 7000);
+            }, 400);
+        }
+        createTulips();
+
+        function typewriterEffect() {
+            const elements = document.querySelectorAll('[data-typewriter]');
+            if (elements.length === 0) return;
+            
+            const cursor = '<span class="typewriter-cursor"></span>';
+            
+            elements.forEach((el, index) => {
+                const text = el.textContent.trim();
+                if (!text) return;
+                el.innerHTML = cursor;
+                el.setAttribute('data-full-text', text);
+                el.setAttribute('data-char-index', '0');
+            });
+
+            function typeElement(el, callback) {
+                const fullText = el.getAttribute('data-full-text');
+                if (!fullText) {
+                    if (callback) callback();
+                    return;
+                }
+                
+                const currentIndex = parseInt(el.getAttribute('data-char-index') || '0');
+                const speed = parseInt(el.getAttribute('data-speed') || '30');
+
+                if (currentIndex < fullText.length) {
+                    el.innerHTML = fullText.substring(0, currentIndex + 1) + cursor;
+                    el.setAttribute('data-char-index', currentIndex + 1);
+                    setTimeout(() => typeElement(el, callback), speed);
+                } else {
+                    el.innerHTML = fullText + cursor;
+                    if (callback) callback();
+                }
+            }
+
+            let currentIndex = 0;
+
+            function typeNext() {
+                const allElements = document.querySelectorAll('[data-typewriter]');
+                if (currentIndex < allElements.length) {
+                    const el = allElements[currentIndex];
+                    const fullText = el.getAttribute('data-full-text');
+                    if (!fullText) {
+                        currentIndex++;
+                        typeNext();
+                        return;
+                    }
+                    typeElement(el, () => {
+                        currentIndex++;
+                        setTimeout(typeNext, 200);
+                    });
+                } else {
+                    setTimeout(() => {
+                        const cursorElements = document.querySelectorAll('.typewriter-cursor');
+                        cursorElements.forEach(c => c.remove());
+                    }, 2000);
+                }
+            }
+
+            setTimeout(typeNext, 300);
+        }
+
+        function initMusic() {
+            if (sessionStorage.getItem('musicPlaying') === 'true') {
+                const audio = document.getElementById('bgMusic');
+                if (audio) {
+                    audio.currentTime = 0;
+                    audio.play().catch(e => console.log('Auto-play prevented:', e));
+                }
+            }
+        }
+
+        window.addEventListener('load', function() {
+            initMusic();
+            
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.target.id === 'page-envelope' && mutation.target.classList.contains('active')) {
+                        setTimeout(typewriterEffect, 500);
+                    }
+                });
+            });
+            
+            observer.observe(document.getElementById('page-envelope'), { attributes: true, attributeFilter: ['class'] });
+        });
+
+        document.querySelectorAll('.polaroid').forEach(polaroid => {
+            polaroid.addEventListener('click', function() {
+                createSparkles(this);
+                createConfetti();
+            });
+        });
+
+        document.getElementById('letterModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLetter();
+            }
+        });
+    </script>
+</body>
+</html>
